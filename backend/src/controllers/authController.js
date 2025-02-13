@@ -96,6 +96,13 @@ exports.updateProfile = async (req, res) => {
   try {
     const updates = req.body;
     
+    // Remove empty strings and null values
+    Object.keys(updates).forEach(key => {
+      if (updates[key] === '' || updates[key] === null) {
+        delete updates[key];
+      }
+    });
+
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { $set: updates },
@@ -111,7 +118,11 @@ exports.updateProfile = async (req, res) => {
       user,
     });
   } catch (error) {
-    res.status(500).json({ message: "Error updating profile", error: error.message });
+    console.error('Profile update error:', error);
+    res.status(500).json({ 
+      message: "Error updating profile", 
+      error: error.message 
+    });
   }
 };
 

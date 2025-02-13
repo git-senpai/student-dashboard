@@ -12,33 +12,43 @@ const loginSchema = Joi.object({
 });
 
 const updateProfileSchema = Joi.object({
-  dateOfBirth: Joi.date(),
-  gender: Joi.string().valid('male', 'female', 'other'),
-  phoneNumber: Joi.string(),
+  name: Joi.string().min(2).max(50).allow('', null),
+  dateOfBirth: Joi.string().allow('', null),
+  gender: Joi.string().valid('male', 'female', 'other').allow('', null),
+  phoneNumber: Joi.string().allow('', null),
   address: Joi.object({
-    street: Joi.string(),
-    city: Joi.string(),
-    state: Joi.string(),
-    country: Joi.string(),
-    zipCode: Joi.string(),
-  }),
+    street: Joi.string().allow('', null),
+    city: Joi.string().allow('', null),
+    state: Joi.string().allow('', null),
+    country: Joi.string().allow('', null),
+    zipCode: Joi.string().allow('', null),
+  }).allow(null),
   education: Joi.object({
-    degree: Joi.string(),
-    institution: Joi.string(),
-    graduationYear: Joi.number(),
-    major: Joi.string(),
-  }),
-  interests: Joi.array().items(Joi.string()),
-  skills: Joi.array().items(Joi.string()),
-  bio: Joi.string().max(500),
+    degree: Joi.string().allow('', null),
+    institution: Joi.string().allow('', null),
+    graduationYear: Joi.alternatives().try(
+      Joi.number().integer().min(0).max(2100),
+      Joi.string().allow('', null)
+    ),
+    major: Joi.string().allow('', null),
+  }).allow(null),
+  interests: Joi.alternatives().try(
+    Joi.array().items(Joi.string()),
+    Joi.string()
+  ).allow(null, ''),
+  skills: Joi.alternatives().try(
+    Joi.array().items(Joi.string()),
+    Joi.string()
+  ).allow(null, ''),
+  bio: Joi.string().max(500).allow('', null),
   socialLinks: Joi.object({
-    linkedin: Joi.string().uri(),
-    twitter: Joi.string().uri(),
-    github: Joi.string().uri(),
-  }),
+    linkedin: Joi.string().uri().allow('', null),
+    twitter: Joi.string().uri().allow('', null),
+    github: Joi.string().uri().allow('', null),
+  }).allow(null),
   profilePicture: Joi.string().uri(),
-  preferredLanguage: Joi.string(),
-  timezone: Joi.string(),
+  preferredLanguage: Joi.string().allow('', null),
+  timezone: Joi.string().allow('', null),
 }).min(1);
 
 module.exports = {
