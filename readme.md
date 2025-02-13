@@ -1,3 +1,50 @@
+# UniSystem - University Management System
+
+A comprehensive full-stack application for managing university student profiles, applications, and academic progress.
+
+## Features
+
+### User Management
+- Complete user authentication system
+- Profile management with completion tracking
+- Social media integration
+- Customizable user preferences
+
+### Dashboard Features
+- Real-time application status tracking
+- Academic performance metrics
+- Course management
+- Interactive statistics and progress visualization
+
+### Profile Management
+Profile completion percentage is calculated based on the following weights:
+- Basic Information (20%): name, email
+- Education Details (20%): degree, institution, graduation year, major
+- Additional Information (20%): bio, preferred language, timezone
+- Address Details (15%): street, city, state, country, zipCode
+- Skills & Interests (15%): skills, interests
+- Social Links (10%): LinkedIn, Twitter, GitHub
+
+## Tech Stack
+
+### Frontend
+- React 19.0.0
+- React Router DOM for navigation
+- TailwindCSS for styling
+- Chart.js for data visualization
+- HeroIcons for UI icons
+- Modern ESLint configuration
+
+### Backend
+- Node.js with Express
+- MongoDB with Mongoose ODM
+- JWT-based authentication
+- Input validation using Joi
+- Security features:
+  - Password hashing (bcryptjs)
+  - Rate limiting
+  - CORS protection
+  - Helmet security headers
 
 ## API Endpoints
 
@@ -49,33 +96,53 @@
    npm run dev
    ```
 
-## Profile Completion Calculation
+## Project Structure
 
-Profile completion percentage is calculated based on the following weights:
-- Basic Information (20%): name, email
-- Education Details (20%): degree, institution, graduation year, major
-- Additional Information (20%): bio, preferred language, timezone
-- Address Details (15%): street, city, state, country, zipCode
-- Skills & Interests (15%): skills, interests
-- Social Links (10%): LinkedIn, Twitter, GitHub
+### Frontend Structure
+```
+frontend/
+├── src/
+│   ├── components/
+│   │   ├── auth/         # Authentication components
+│   │   ├── common/       # Reusable UI components
+│   │   ├── dashboard/    # Dashboard-specific components
+│   │   ├── home/         # Homepage components
+│   │   └── layout/       # Layout components
+│   ├── context/          # React context providers
+│   ├── pages/            # Page components
+│   └── data/            # Static data and constants
+```
+
+### Backend Structure
+```
+backend/
+├── src/
+│   ├── controllers/      # Request handlers
+│   ├── middleware/       # Custom middleware
+│   ├── models/          # Database models
+│   ├── routes/          # API routes
+│   ├── validations/     # Input validation schemas
+│   └── server.js        # Main application file
+```
 
 ## Security Features
 
-- Password hashing using bcrypt
+- Secure password hashing
 - JWT-based authentication
 - Protected routes
-- Input validation using Joi
+- Input validation
 - Rate limiting
 - CORS protection
-- Helmet security headers
+- Security headers with Helmet
 
 ## Error Handling
 
 The application includes comprehensive error handling:
-- Form validation errors
+- Validation errors
 - API error responses
 - Network error handling
-- Toast notifications for user feedback
+- User-friendly notifications
+- Detailed error logging
 
 ## Contributing
 
