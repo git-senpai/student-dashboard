@@ -9,17 +9,7 @@ const generateToken = (userId) => {
 // Register new user
 exports.register = async (req, res) => {
   try {
-    const {
-      fullName,
-      email,
-      password,
-      mobileNumber,
-      studentId,
-      degreeProgram,
-      yearOfStudy,
-      universityName,
-      profilePicture,
-    } = req.body;
+    const { name, email, password } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -27,17 +17,11 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: "Email already registered" });
     }
 
-    // Create new user
+    // Create new user with basic info
     const user = new User({
-      fullName,
+      name,
       email,
       password,
-      mobileNumber,
-      studentId,
-      degreeProgram,
-      yearOfStudy,
-      universityName,
-      profilePicture,
     });
 
     await user.save();
@@ -50,17 +34,12 @@ exports.register = async (req, res) => {
       token,
       user: {
         id: user._id,
-        fullName: user.fullName,
+        name: user.name,
         email: user.email,
-        degreeProgram: user.degreeProgram,
-        yearOfStudy: user.yearOfStudy,
-        universityName: user.universityName,
       },
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Registration failed", error: error.message });
+    res.status(500).json({ message: "Registration failed", error: error.message });
   }
 };
 
@@ -93,12 +72,8 @@ exports.login = async (req, res) => {
       token,
       user: {
         id: user._id,
-        fullName: user.fullName,
+        name: user.name,
         email: user.email,
-        degreeProgram: user.degreeProgram,
-        yearOfStudy: user.yearOfStudy,
-        universityName: user.universityName,
-        lastLogin: user.lastLogin,
       },
     });
   } catch (error) {
@@ -106,15 +81,13 @@ exports.login = async (req, res) => {
   }
 };
 
-// Get current user profile
+// Get user profile
 exports.getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("-password");
     res.json(user);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error fetching profile", error: error.message });
+    res.status(500).json({ message: "Error fetching profile", error: error.message });
   }
 };
 
@@ -122,35 +95,32 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const updates = req.body;
-    const allowedUpdates = [
-      "fullName",
-      "mobileNumber",
-      "degreeProgram",
-      "yearOfStudy",
-      "universityName",
-      "profilePicture",
-    ];
+    
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    ).select("-password");
 
-    // Filter out non-allowed updates
-    const filteredUpdates = Object.keys(updates)
-      .filter((key) => allowedUpdates.includes(key))
-      .reduce((obj, key) => {
-        obj[key] = updates[key];
-        return obj;
-      }, {});
-
-    const user = await User.findByIdAndUpdate(req.user._id, filteredUpdates, {
-      new: true,
-      runValidators: true,
-    }).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
     res.json({
       message: "Profile updated successfully",
       user,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error updating profile", error: error.message });
+    res.status(500).json({ message: "Error updating profile", error: error.message });
+  }
+};
+
+// Logout (optional - can be handled client-side)
+exports.logout = async (req, res) => {
+  try {
+    // You could implement token blacklisting here if needed
+    res.json({ message: "Logged out successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error logging out", error: error.message });
   }
 };

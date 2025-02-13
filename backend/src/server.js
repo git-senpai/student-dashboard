@@ -8,8 +8,6 @@ require("dotenv").config();
 
 // Import routes
 const authRoutes = require("./routes/auth");
-const applicationRoutes = require("./routes/applications");
-const notificationRoutes = require("./routes/notifications");
 
 const app = express();
 
@@ -37,16 +35,14 @@ mongoose
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/applications", applicationRoutes);
-app.use("/api/notifications", notificationRoutes);
 
 // Welcome route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to University Insights API" });
+  res.json({ message: "Welcome to University Auth API" });
 });
 
 // 404 handler
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 

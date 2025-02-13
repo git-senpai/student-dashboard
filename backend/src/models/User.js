@@ -3,9 +3,9 @@ const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
-    fullName: {
+    name: {
       type: String,
-      required: [true, "Full name is required"],
+      required: [true, "Name is required"],
       trim: true,
     },
     email: {
@@ -14,53 +14,50 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
-      match: [
-        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-        "Please enter a valid email",
-      ],
     },
     password: {
       type: String,
       required: [true, "Password is required"],
       minlength: [6, "Password must be at least 6 characters"],
     },
-    mobileNumber: {
+    // Extended profile fields (optional during registration)
+    dateOfBirth: Date,
+    gender: {
       type: String,
-      trim: true,
+      enum: ['male', 'female', 'other'],
     },
-    studentId: {
+    phoneNumber: String,
+    address: {
+      street: String,
+      city: String,
+      state: String,
+      country: String,
+      zipCode: String,
+    },
+    education: {
+      degree: String,
+      institution: String,
+      graduationYear: Number,
+      major: String,
+    },
+    interests: [String],
+    skills: [String],
+    bio: {
       type: String,
-      trim: true,
+      maxLength: 500,
     },
-    degreeProgram: {
-      type: String,
-      enum: ["B.Tech", "B.Sc", "M.Tech", "M.Sc", "PhD", "Other"],
-      required: [true, "Degree program is required"],
+    socialLinks: {
+      linkedin: String,
+      twitter: String,
+      github: String,
     },
-    yearOfStudy: {
-      type: String,
-      enum: ["1st", "2nd", "3rd", "4th", "5th"],
-      required: [true, "Year of study is required"],
-    },
-    universityName: {
-      type: String,
-      required: [true, "University name is required"],
-      trim: true,
-    },
-    profilePicture: {
-      type: String,
-      default: "",
-    },
+    profilePicture: String,
+    preferredLanguage: String,
+    timezone: String,
     lastLogin: {
       type: Date,
       default: Date.now,
-    },
-    applications: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Application",
-      },
-    ],
+    }
   },
   {
     timestamps: true,
@@ -70,7 +67,6 @@ const userSchema = new mongoose.Schema(
 // Hash password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
