@@ -13,13 +13,21 @@ function Navbar() {
 
   const AuthLinks = () => (
     <>
-      <Link to="/profile" className="hover:bg-blue-700 px-3 py-2 rounded">
+      <Link
+        to="/dashboard"
+        className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+      >
+        Dashboard
+      </Link>
+      <Link
+        to="/profile"
+        className="text-gray-500 hover:text-gray-700"
+      >
         Profile
       </Link>
       <Button
-        variant="secondary"
-        size="sm"
         onClick={handleLogout}
+        variant="secondary"
       >
         Logout
       </Button>
@@ -28,10 +36,16 @@ function Navbar() {
 
   const GuestLinks = () => (
     <>
-      <Link to="/login" className="hover:bg-blue-700 px-3 py-2 rounded">
+      <Link
+        to="/login"
+        className="text-gray-500 hover:text-gray-700"
+      >
         Login
       </Link>
-      <Link to="/register" className="hover:bg-blue-700 px-3 py-2 rounded">
+      <Link
+        to="/register"
+        className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+      >
         Register
       </Link>
     </>
@@ -107,6 +121,13 @@ function Navbar() {
             </Link>
             {user ? (
               <>
+                <Link
+                  to="/dashboard"
+                  className="block hover:bg-blue-700 px-3 py-2 rounded"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Dashboard
+                </Link>
                 <Link
                   to="/profile"
                   className="block hover:bg-blue-700 px-3 py-2 rounded"

@@ -228,7 +228,7 @@ function Profile() {
   }
 
   // Helper function to render a field if it has data or is in edit mode
-  const renderField = (label, value, editComponent) => {
+  const renderField = (label, value, editComponent, required = false) => {
     if (!editing && !value) return null;
     
     return (
@@ -308,161 +308,156 @@ function Profile() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-      <div className="bg-white shadow rounded-lg p-6 space-y-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
-          {!editing && (
-            <Button onClick={() => setEditing(true)}>
-              Edit Profile
-            </Button>
-          )}
-        </div>
-
-        {/* Profile Completion Progress */}
-        <div className="mb-8">
-          <ProgressBar percentage={calculateProfileCompletion(formData)} />
-          {!editing && calculateProfileCompletion(formData) < 100 && (
-            <p className="mt-2 text-sm text-gray-600">
-              Complete your profile to help us serve you better.
-              <button
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Profile Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg shadow-lg mb-8 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-white">Profile Settings</h1>
+              <p className="mt-1 text-blue-100">
+                Manage your account information and preferences
+              </p>
+            </div>
+            {!editing && (
+              <Button
                 onClick={() => setEditing(true)}
-                className="ml-2 text-blue-600 hover:text-blue-800"
+                className="bg-white text-blue-600 hover:bg-blue-50"
               >
-                Complete Now
-              </button>
-            </p>
-          )}
+                Edit Profile
+              </Button>
+            )}
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Basic Information - Always show */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Basic Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {renderField("Name", formData.name,
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              )}
-              {renderField("Email", formData.email,
-                <input
-                  type="email"
-                  value={formData.email}
-                  disabled
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-50"
-                />
-              )}
-            </div>
-          </div>
-
-          {/* Address Section */}
-          {(editing || hasData('address')) && (
+        {/* Main Content */}
+        <div className="bg-white rounded-lg shadow-lg">
+          <form onSubmit={handleSubmit} className="p-6 space-y-8">
+            {/* Basic Information */}
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold">Address</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {renderField("Street", formData.address.street,
-                  <input
-                    type="text"
-                    name="address.street"
-                    value={formData.address.street}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                )}
-                {renderField("City", formData.address.city,
-                  <input
-                    type="text"
-                    name="address.city"
-                    value={formData.address.city}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                )}
-                {renderField("State", formData.address.state,
-                  <input
-                    type="text"
-                    name="address.state"
-                    value={formData.address.state}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                )}
-                {renderField("Country", formData.address.country,
-                  <input
-                    type="text"
-                    name="address.country"
-                    value={formData.address.country}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                )}
-                {renderField("ZIP Code", formData.address.zipCode,
-                  <input
-                    type="text"
-                    name="address.zipCode"
-                    value={formData.address.zipCode}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
+              <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-900">Basic Information</h2>
+                {editing && (
+                  <span className="text-sm text-gray-500">* Required fields</span>
                 )}
               </div>
-              </div>
-          )}
-
-          {/* Education Section */}
-          {(editing || hasData('education')) && (
-            <div className="space-y-6">
-              <h2 className="text-xl font-semibold">Education</h2>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {renderField("Degree", formData.education.degree,
+                {renderField("Full Name", formData.name,
                   <input
                     type="text"
-                    name="education.degree"
-                    value={formData.education.degree}
+                    name="name"
+                    value={formData.name}
                     onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    disabled={!editing}
+                    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                  />,
+                  true
+                )}
+
+                {renderField("Email", formData.email,
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    disabled
+                    className="mt-1 block w-full rounded-lg border-gray-300 bg-gray-50 text-gray-500 shadow-sm"
                   />
                 )}
-                {renderField("Institution", formData.education.institution,
+
+                {renderField("Date of Birth", formData.dateOfBirth,
                   <input
-                    type="text"
-                    name="education.institution"
-                    value={formData.education.institution}
+                    type="date"
+                    name="dateOfBirth"
+                    value={formData.dateOfBirth}
                     onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    disabled={!editing}
+                    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
                   />
                 )}
-                {renderField("Graduation Year", formData.education.graduationYear,
-                  <input
-                    type="number"
-                    name="education.graduationYear"
-                    value={formData.education.graduationYear}
+
+                {renderField("Gender", formData.gender,
+                  <select
+                    name="gender"
+                    value={formData.gender}
                     onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
+                    disabled={!editing}
+                    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
                 )}
-                {renderField("Major", formData.education.major,
+
+                {renderField("Phone Number", formData.phoneNumber,
                   <input
-                    type="text"
-                    name="education.major"
-                    value={formData.education.major}
+                    type="tel"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
                     onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    disabled={!editing}
+                    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
                   />
                 )}
               </div>
             </div>
-          )}
 
-          {/* Skills and Interests */}
-          {(editing || hasData('skills') || hasData('interests')) && (
+            {/* Address Information */}
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold">Skills & Interests</h2>
+              <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-900">Address Information</h2>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {Object.keys(formData.address).map(key => (
+                  renderField(
+                    key.charAt(0).toUpperCase() + key.slice(1),
+                    formData.address[key],
+                    <input
+                      type="text"
+                      name={`address.${key}`}
+                      value={formData.address[key]}
+                      onChange={handleChange}
+                      disabled={!editing}
+                      className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                    />
+                  )
+                ))}
+              </div>
+            </div>
+
+            {/* Education */}
+            <div className="space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-900">Education Details</h2>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {Object.keys(formData.education).map(key => (
+                  renderField(
+                    key.charAt(0).toUpperCase() + key.slice(1),
+                    formData.education[key],
+                    <input
+                      type={key === 'graduationYear' ? 'number' : 'text'}
+                      name={`education.${key}`}
+                      value={formData.education[key]}
+                      onChange={handleChange}
+                      disabled={!editing}
+                      className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                    />
+                  )
+                ))}
+              </div>
+            </div>
+
+            {/* Skills & Interests */}
+            <div className="space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-900">Skills & Interests</h2>
+              </div>
+              
               <div className="grid grid-cols-1 gap-6">
                 {renderField("Skills", formData.skills,
                   <input
@@ -470,120 +465,83 @@ function Profile() {
                     name="skills"
                     value={formData.skills}
                     onChange={handleChange}
+                    disabled={!editing}
                     placeholder="Enter skills (comma-separated)"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
                   />
                 )}
+
                 {renderField("Interests", formData.interests,
                   <input
                     type="text"
                     name="interests"
                     value={formData.interests}
                     onChange={handleChange}
+                    disabled={!editing}
                     placeholder="Enter interests (comma-separated)"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
                   />
                 )}
               </div>
-              </div>
-          )}
+            </div>
 
-          {/* Social Links */}
-          {(editing || hasData('socialLinks')) && (
+            {/* Social Links */}
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold">Social Links</h2>
+              <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-900">Social Links</h2>
+              </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {renderField("LinkedIn", formData.socialLinks.linkedin,
-                  <input
-                    type="url"
-                    name="socialLinks.linkedin"
-                    value={formData.socialLinks.linkedin}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                )}
-                {renderField("Twitter", formData.socialLinks.twitter,
-                  <input
-                    type="url"
-                    name="socialLinks.twitter"
-                    value={formData.socialLinks.twitter}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                )}
-                {renderField("GitHub", formData.socialLinks.github,
-                  <input
-                    type="url"
-                    name="socialLinks.github"
-                    value={formData.socialLinks.github}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                )}
+                {Object.keys(formData.socialLinks).map(key => (
+                  renderField(
+                    key.charAt(0).toUpperCase() + key.slice(1),
+                    formData.socialLinks[key],
+                    <input
+                      type="url"
+                      name={`socialLinks.${key}`}
+                      value={formData.socialLinks[key]}
+                      onChange={handleChange}
+                      disabled={!editing}
+                      className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                    />
+                  )
+                ))}
               </div>
             </div>
-          )}
 
-          {/* Additional Information */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Additional Information</h2>
-            <div className="grid grid-cols-1 gap-6">
-              {renderField("Bio", formData.bio,
-                <textarea
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleChange}
-                  rows={3}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              )}
-            </div>
-          </div>
-
-          {/* Preferences */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Preferences</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {renderField("Preferred Language", formData.preferredLanguage,
-                <input
-                  type="text"
-                  name="preferredLanguage"
-                  value={formData.preferredLanguage}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              )}
-              {renderField("Timezone", formData.timezone,
-                <input
-                  type="text"
-                  name="timezone"
-                  value={formData.timezone}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              )}
-            </div>
-          </div>
-
-          {editing && (
-            <div className="flex justify-end space-x-3">
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => setEditing(false)}
-                disabled={loading}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={loading}
-              >
-                {loading ? 'Saving...' : 'Save Changes'}
-              </Button>
+            {/* Action Buttons */}
+            {editing && (
+              <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setEditing(false)}
+                  disabled={loading}
+                  className="px-6"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="px-6 bg-blue-600 hover:bg-blue-700"
+                >
+                  {loading ? (
+                    <div className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Saving...
+                    </div>
+                  ) : (
+                    'Save Changes'
+                  )}
+                </Button>
+              </div>
+            )}
+          </form>
         </div>
-          )}
-        </form>
       </div>
     </div>
   )
