@@ -1,19 +1,60 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
+import { useNotification } from '../../context/NotificationContext'
+import Button from '../common/Button'
 
 function RegisterForm() {
+  const navigate = useNavigate()
+  const { login } = useAuth()
+  const { showNotification } = useNotification()
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
     password: '',
     confirmPassword: '',
   })
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // TODO: Implement registration logic
-    console.log('Registration submitted:', formData)
+    
+    if (formData.password !== formData.confirmPassword) {
+      showNotification('Passwords do not match', 'error')
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      // Remove confirmPassword before sending
+      const { confirmPassword, ...registerData } = formData
+
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registerData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Registration failed')
+      }
+
+      // Save token and user data
+      login(data.user)
+      localStorage.setItem('token', data.token)
+      
+      showNotification('Registration successful!', 'success')
+      navigate('/profile')
+    } catch (error) {
+      showNotification(error.message, 'error')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleChange = (e) => {
@@ -35,25 +76,13 @@ function RegisterForm() {
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <input
-                id="firstName"
-                name="firstName"
+                id="name"
+                name="name"
                 type="text"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="First Name"
-                value={formData.firstName}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Last Name"
-                value={formData.lastName}
+                placeholder="Full Name"
+                value={formData.name}
                 onChange={handleChange}
               />
             </div>
@@ -96,12 +125,13 @@ function RegisterForm() {
           </div>
 
           <div>
-            <button
+            <Button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              fullWidth
+              disabled={isLoading}
             >
-              Register
-            </button>
+              {isLoading ? 'Creating account...' : 'Create Account'}
+            </Button>
           </div>
 
           <div className="text-sm text-center">
