@@ -39,7 +39,9 @@ exports.register = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Registration failed", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Registration failed", error: error.message });
   }
 };
 
@@ -87,7 +89,9 @@ exports.getProfile = async (req, res) => {
     const user = await User.findById(req.user._id).select("-password");
     res.json(user);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching profile", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching profile", error: error.message });
   }
 };
 
@@ -95,10 +99,10 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const updates = req.body;
-    
+
     // Remove empty strings and null values
-    Object.keys(updates).forEach(key => {
-      if (updates[key] === '' || updates[key] === null) {
+    Object.keys(updates).forEach((key) => {
+      if (updates[key] === "" || updates[key] === null) {
         delete updates[key];
       }
     });
@@ -118,10 +122,10 @@ exports.updateProfile = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.error('Profile update error:', error);
-    res.status(500).json({ 
-      message: "Error updating profile", 
-      error: error.message 
+    console.error("Profile update error:", error);
+    res.status(500).json({
+      message: "Error updating profile",
+      error: error.message,
     });
   }
 };
@@ -132,6 +136,8 @@ exports.logout = async (req, res) => {
     // You could implement token blacklisting here if needed
     res.json({ message: "Logged out successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Error logging out", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error logging out", error: error.message });
   }
 };
