@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useNotification } from "../../context/NotificationContext";
 import Button from "../common/Button";
 import { motion } from "framer-motion";
+import { getApiUrl, ENDPOINTS } from '../../constants/config';
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(`${getApiUrl()}${ENDPOINTS.AUTH.LOGIN}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

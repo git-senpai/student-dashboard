@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useNotification } from "../../context/NotificationContext";
 import { motion } from "framer-motion";
+import { getApiUrl, ENDPOINTS } from '../../constants/config';
 
 function RegisterForm() {
   const navigate = useNavigate();
@@ -27,19 +28,15 @@ function RegisterForm() {
     setIsLoading(true);
 
     try {
-      // Remove confirmPassword before sending
       const { confirmPassword, ...registerData } = formData;
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/auth/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(registerData),
-        }
-      );
+      const response = await fetch(`${getApiUrl()}${ENDPOINTS.AUTH.REGISTER}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(registerData),
+      });
 
       const data = await response.json();
 

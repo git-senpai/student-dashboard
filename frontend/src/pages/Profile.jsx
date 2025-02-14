@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNotification } from "../context/NotificationContext";
+import { getApiUrl, ENDPOINTS } from '../constants/config';
+import ProfileCard from "../components/dashboard/ProfileCard";
+import Spinner from "../components/common/Spinner";
 import { motion } from "framer-motion";
 
 function Profile() {
-  const { user, login } = useAuth();
+  const { user, updateProfile } = useAuth();
   const { showNotification } = useNotification();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [profileData, setProfileData] = useState(null);
   const [editing, setEditing] = useState(false);
 
   // Initialize all nested objects with empty values
@@ -44,47 +48,54 @@ function Profile() {
   const [formData, setFormData] = useState(initialFormState);
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    const fetchProfileData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${getApiUrl()}${ENDPOINTS.USER.PROFILE}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-  const fetchProfile = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/auth/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        if (!response.ok) {
+          throw new Error("Failed to fetch profile data");
+        }
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch profile");
+        const data = await response.json();
+        setProfileData(data);
+        setFormData({
+          ...initialFormState,
+          ...data,
+          address: {
+            ...initialFormState.address,
+            ...(data.address || {}),
+          },
+          education: {
+            ...initialFormState.education,
+            ...(data.education || {}),
+          },
+          socialLinks: {
+            ...initialFormState.socialLinks,
+            ...(data.socialLinks || {}),
+          },
+          interests: data.interests?.join(", ") || "",
+          skills: data.skills?.join(", ") || "",
+          dateOfBirth: data.dateOfBirth ? data.dateOfBirth.split("T")[0] : "",
+        });
+      } catch (error) {
+        showNotification(error.message, "error");
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const data = await response.json();
+    fetchProfileData();
+  }, [showNotification]);
 
-      // Ensure nested objects exist before setting state
-      setFormData({
-        ...initialFormState, // Start with initial state to ensure structure
-        ...data, // Spread the received data
-        // Handle nested objects safely
-        address: {
-          ...initialFormState.address,
-          ...(data.address || {}),
-        },
-        education: {
-          ...initialFormState.education,
-          ...(data.education || {}),
-        },
-        socialLinks: {
-          ...initialFormState.socialLinks,
-          ...(data.socialLinks || {}),
-        },
-        // Handle arrays
-        interests: data.interests?.join(", ") || "",
-        skills: data.skills?.join(", ") || "",
-        // Handle date
-        dateOfBirth: data.dateOfBirth ? data.dateOfBirth.split("T")[0] : "",
-      });
+  const handleProfileUpdate = async (updatedData) => {
+    try {
+      await updateProfile(updatedData);
+      showNotification("Profile updated successfully", "success");
     } catch (error) {
       showNotification(error.message, "error");
     }
@@ -179,23 +190,7 @@ function Profile() {
 
       console.log("Sending data:", updatedData);
 
-      const response = await fetch("http://localhost:5000/api/auth/profile", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updatedData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to update profile");
-      }
-
-      const data = await response.json();
-      login(data.user);
-      showNotification("Profile updated successfully", "success");
+      await handleProfileUpdate(updatedData);
       setEditing(false);
     } catch (error) {
       showNotification(error.message, "error");
@@ -333,7 +328,7 @@ function Profile() {
     return Math.round(totalScore);
   };
 
-  if (!user) {
+  if (loading) {
     return <Spinner />;
   }
 

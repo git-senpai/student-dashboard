@@ -1,35 +1,12 @@
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
+import cors from 'cors';
 
-const app = express();
+// CORS configuration
+const corsOptions = {
+  origin: '*', // Allow all origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  maxAge: 86400 // 24 hours
+};
 
-const allowedOrigins = [
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:5173"
-    : process.env.FRONTEND_URL,
-  "http://localhost:3000",
-];
-
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  })
-);
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Test route
-app.get("/", (req, res) => {
-  res.json({ message: "Backend API is running!" });
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: "Something went wrong!" });
-});
-
-module.exports = app;
+app.use(cors(corsOptions)); 
