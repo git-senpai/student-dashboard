@@ -1,8 +1,8 @@
-import { getApiUrl } from '../constants/config';
+import { getApiUrl } from "../constants/config";
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
   const token = localStorage.getItem("token");
-  
+
   const defaultHeaders = {
     "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
@@ -10,6 +10,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
   const response = await fetch(`${getApiUrl()}${endpoint}`, {
     ...options,
+    credentials: "include",
     headers: {
       ...defaultHeaders,
       ...options.headers,
@@ -22,4 +23,4 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
   }
 
   return response.json();
-}; 
+};
