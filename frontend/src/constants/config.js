@@ -14,18 +14,18 @@ export const getApiUrl = () => {
 
 export const ENDPOINTS = {
   AUTH: {
-    LOGIN: "/auth/login",
-    REGISTER: "/auth/register",
-    LOGOUT: "/auth/logout",
-    VERIFY: "/auth/verify",
+    LOGIN: "auth/login",
+    REGISTER: "auth/register",
+    LOGOUT: "auth/logout",
+    VERIFY: "auth/verify",
   },
   USER: {
-    PROFILE: "/user/profile",
-    UPDATE: "/user/update",
-    DASHBOARD: "/user/dashboard",
+    PROFILE: "user/profile",
+    UPDATE: "user/update",
+    DASHBOARD: "user/dashboard",
   },
   COURSES: {
-    LIST: "/courses",
-    DETAILS: "/courses/:id",
+      LIST: "courses",
+    DETAILS: "courses/:id",
   },
 };
